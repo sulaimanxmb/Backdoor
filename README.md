@@ -3,9 +3,9 @@
 Dosen't matter if target dosen't have pyhton installed
 
 You should have these requirements :
-Python installed with required packages /n
-Pyinstaller installed/n
-Update ur current IP address in Pastebin.com/n
+1. Python installed with required packages 
+2. Pyinstaller installed
+3. Update ur current IP address in Pastebin.com
 
 ## Steps :
 1. do git clone https://github.com/Anonomous69/Backdoor
