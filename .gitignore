@@ -1,0 +1,20 @@
+# Ignore compiled and system files
+__pycache__/
+*.pyc
+
+# Ignore test/sample payloads
+*.pdf
+*.ico
+
+# Ignore OS or editor-specific files
+.DS_Store
+*.swp
+
+# Logs or output
+*.log
+output/
+logs/
+
+# Secrets
+*.env
+secrets.txt
