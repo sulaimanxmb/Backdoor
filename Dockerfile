@@ -5,7 +5,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Copy the .exe file into the container
-COPY . .
+COPY backdoor.exe .
 
 # Expose the port the server will run on
 EXPOSE 8080
