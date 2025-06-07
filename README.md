@@ -18,7 +18,7 @@ You should have these requirements :
 6. when target clicks backdoor, u get the connection
 
 ## Docker :
-for a proper web server (lacking in windows) to host the backdoor.exe file use docker
+for a proper web server (lacking in windows) to host the backdoor.exe file use docker ( I know using Python webserver is more simpler but I am using something different )
 steps:
 1. cd Docker
 2. docker build -t Dcoker .
