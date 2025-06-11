@@ -10,7 +10,8 @@ You should have these requirements :
 4. Must have docker installed if using it
 
 ## Steps to use this backdoor :
-1. ```zsh
+1. clone this repo :
+    ```zsh
    git clone https://github.com/Anonomous69/Backdoor
    ```
    cd to that directory
@@ -24,7 +25,7 @@ You should have these requirements :
    ```zsh
    python listeenr.py
    ```
-7. when target clicks backdoor, you get the connection
+ when target clicks backdoor, you get the connection
 
 ## Docker :
 for a proper web server (lacking in windows) to host the backdoor.exe file use docker ( I know using Python webserver is more simpler but I am using something different )
