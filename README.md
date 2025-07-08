@@ -1,4 +1,4 @@
-#⚠️ | This Backdoor dosen't bypass windows defender and other AV's
+# ⚠️ | This Backdoor dosen't bypass windows defender and other AV's
 
 For educational Purpose only
 Dosen't matter if target dosen't have pyhton installed
