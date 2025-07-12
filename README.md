@@ -15,7 +15,7 @@ Unobfuscated backdoor will be detected and quarintined by defender
 2. Any OS is fine
 
 ## Steps to use this backdoor :
- 1. ### clone this repo :
+1. ### clone this repo :
     ```zsh
    git clone https://github.com/Anonomous69/Backdoor
    ```
