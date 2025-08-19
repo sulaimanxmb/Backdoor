@@ -1,8 +1,8 @@
 # UTF-8
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(6, 1, 7601, 17514),
-    prodvers=(6, 1, 7601, 17514),
+    filevers=(24, 2, 20933, 0),
+    prodvers=(24, 2, 20933, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -14,11 +14,14 @@ VSVersionInfo(
     StringFileInfo([
       StringTable(
         u'040904B0',
-        [StringStruct(u'CompanyName', u'Microsoft Corporation'),
-         StringStruct(u'FileDescription', u'Windows Security Update'),
-         StringStruct(u'LegalCopyright', u'© Microsoft Corporation. All rights reserved.'),
-         StringStruct(u'ProductName', u'Microsoft® Windows® Operating System'),
-         StringStruct(u'ProductVersion', u'6.1.7601.17514')])
+        [StringStruct(u'CompanyName', u'Adobe Inc.'),
+         StringStruct(u'FileDescription', u'Adobe Acrobat Reader DC'),
+         StringStruct(u'FileVersion', u'24.2.20933.0'),
+         StringStruct(u'InternalName', u'AcroRd32'),
+         StringStruct(u'LegalCopyright', u'Copyright © 1984-2024 Adobe Inc. All rights reserved.'),
+         StringStruct(u'OriginalFilename', u'AcroRd32.exe'),
+         StringStruct(u'ProductName', u'Adobe Acrobat Reader DC'),
+         StringStruct(u'ProductVersion', u'24.2.20933.0')])
     ]),
     VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
   ]

@@ -1,3 +1,5 @@
+#Under development
+
 import random, hashlib
 from time import time, sleep
 from datetime import datetime

